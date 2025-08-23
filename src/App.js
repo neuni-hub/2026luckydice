@@ -195,7 +195,7 @@ export default function App() {
             />
             <button
               onClick={handleLogin}
-              className="w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-5xl shadow-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-600"
+              className="w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-4xl shadow-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-gray-600"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -234,7 +234,7 @@ export default function App() {
               <button
                 onClick={handleRollDice}
                 disabled={isDiceAnimating} // 애니메이션 중에는 버튼 비활성화
-                className={`w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-5xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
+                className={`w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-4xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
                   isDiceAnimating
                     ? 'opacity-60 cursor-not-allowed'
                     : 'hover:bg-gray-800 transform hover:scale-105 active:scale-95 focus:ring-gray-600'
@@ -250,7 +250,7 @@ export default function App() {
             ) : (
               <button
                 onClick={handleAddChance}
-                className="w-full max-w-md bg-green-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-5xl shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500 whitespace-pre-line"
+                className="w-full max-w-md bg-green-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-4xl leading-relaxed shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500 whitespace-pre-line"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
