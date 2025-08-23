@@ -191,7 +191,7 @@ export default function App() {
               placeholder="고유번호를 입력하세요"
               value={uniqueId}
               onChange={(e) => setUniqueId(e.target.value)}
-              className="w-full max-w-md p-3 sm:p-4 md:p-5 text-gray-900 bg-white rounded-[30px] text-lg sm:text-xl md:text-2xl focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-300"
+              className="w-full max-w-md p-3 sm:p-4 md:p-5 py-4 sm:py-5 md:py-5 px-6 text-gray-900 bg-white rounded-[30px] text-lg sm:text-xl md:text-2xl focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-300"
             />
             <button
               onClick={handleLogin}
