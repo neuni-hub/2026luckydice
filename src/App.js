@@ -125,7 +125,7 @@ export default function App() {
           if (newChances === 0) {
             setMessage(`${loggedInUser.name}님, 남은 기회가 없어요.`);
           } else {
-            setMessage(`${loggedInUser.name}님! 남은 기회: ${newChances}회`);
+            setMessage(`남은 기회: ${newChances}회`);
           }
         }, 1500);
       } else if (result && result.status === 'error') {
@@ -156,7 +156,7 @@ export default function App() {
     if (result && result.status === 'success') {
       const { chances: newChances } = result.data;
       setChances(newChances);
-      setMessage(`${loggedInUser.name}님, 1회 기회가 추가되었습니다! \n총 ${newChances}번의 기회가 있어요.`);
+      setMessage(`${loggedInUser.name}님, 기회가 추가되었습니다!`);
     } else if (result && result.status === 'error') {
       setMessage(result.message);
     } else {
