@@ -15,6 +15,7 @@ export default function App() {
   const sendRequestToAppsScript = async (action, payload = {}) => {
     if (!GOOGLE_APPS_SCRIPT_URL) {
       setMessage('Google Apps Script URL이 설정되지 않았습니다.');
+      console.error('ERROR: GOOGLE_APPS_SCRIPT_URL이 정의되지 않았습니다.');
       return null;
     }
 
@@ -25,22 +26,29 @@ export default function App() {
       url.searchParams.append(key, payload[key]);
     }
 
+    console.log('API 요청 URL:', url.toString()); // 요청 URL 로그
+
     try {
-      setMessage('서버에 요청 중...');
+      // setMessage('서버에 요청 중...'); // 이 부분을 제거했습니다.
       const response = await fetch(url.toString(), {
         method: 'GET', // Apps Script의 doGet 함수를 호출하기 위해 GET 사용
         mode: 'cors', // CORS 정책 준수
       });
 
+      console.log('API 응답 객체:', response); // 원본 응답 객체 로그
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text(); // 오류 발생 시 응답 텍스트도 가져와서 로그
+        console.error('HTTP 에러 발생:', response.status, errorText);
+        throw new Error(`HTTP error! status: ${response.status}. Message: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('API 응답 데이터 (JSON):', data); // 파싱된 JSON 데이터 로그
       return data;
     } catch (error) {
       console.error('Apps Script 요청 실패:', error);
-      setMessage(`오류 발생: ${error.message}. 콘솔을 확인해주세요.`);
+      setMessage(`오류 발생: ${error.message}. 개발자 도구 콘솔을 확인해주세요.`);
       return null;
     }
   };
@@ -52,7 +60,10 @@ export default function App() {
       return;
     }
 
+    setMessage('서버에 요청 중...'); // 로그인 버튼 클릭 시 여기에만 메시지를 표시합니다.
+    console.log('로그인 시도:', uniqueId); // 로그인 시도 로그
     const result = await sendRequestToAppsScript('login', { code: uniqueId });
+    console.log('sendRequestToAppsScript 결과:', result); // Apps Script 응답 결과 로그
 
     if (result && result.status === 'success') {
       const { name, chances: fetchedChances } = result.data;
@@ -62,18 +73,19 @@ export default function App() {
       setIsDiceAnimating(false);
 
       if (fetchedChances > 0) {
-        setMessage(`안녕하세요, ${name}님! ${fetchedChances}번의 기회가 있어요.`);
+        setMessage(`안녕하세요, ${name}님! {"\n"}${fetchedChances}번의 기회가 있어요.`);
       } else {
         setMessage(`${name}님, 남은 기회가 없어요.`);
       }
     } else if (result && result.status === 'error') {
-      setMessage(result.message);
+      setMessage(result.message); // Apps Script에서 보낸 오류 메시지 표시
       setLoggedInUser(null);
       setChances(0);
       setDiceResult(null);
       setIsDiceAnimating(false);
     } else {
-      setMessage('로그인 중 알 수 없는 오류가 발생했습니다.');
+      // result가 null이거나 예상치 못한 형식일 때 (네트워크 오류, JSON 파싱 실패 등)
+      setMessage('로그인 중 알 수 없는 오류가 발생했습니다. 개발자 도구 콘솔을 확인해주세요.');
       setLoggedInUser(null);
       setChances(0);
       setDiceResult(null);
@@ -92,12 +104,14 @@ export default function App() {
       // 주사위 애니메이션 시작
       setDiceResult(null);
       setIsDiceAnimating(true);
-      setMessage('주사위를 굴리고 있어요...');
+      setMessage('두구두구...결과는'); // 주사위 굴리는 중 메시지는 그대로 유지
 
       const roll = Math.floor(Math.random() * 6) + 1; // 클라이언트 측에서 주사위 결과 먼저 생성
+      console.log('주사위 굴리기 시도:', loggedInUser.id, '예상 결과:', roll); // 주사위 굴리기 시도 로그
 
       // Apps Script에 기회 차감 요청
       const result = await sendRequestToAppsScript('rollDice', { code: loggedInUser.id, rollResult: roll });
+      console.log('sendRequestToAppsScript (rollDice) 결과:', result); // Apps Script 응답 결과 로그
 
       if (result && result.status === 'success') {
         const { chances: newChances } = result.data;
@@ -118,7 +132,7 @@ export default function App() {
         setMessage(result.message);
         setIsDiceAnimating(false); // 오류 시 애니메이션 종료
       } else {
-        setMessage('주사위 굴리기 중 알 수 없는 오류가 발생했습니다.');
+        setMessage('주사위 굴리기 중 알 수 없는 오류가 발생했습니다. 개발자 도구 콘솔을 확인해주세요.');
         setIsDiceAnimating(false); // 오류 시 애니메이션 종료
       }
 
@@ -133,9 +147,11 @@ export default function App() {
       setMessage('먼저 로그인해주세요.');
       return;
     }
-
+    // setMessage('서버에 요청 중...'); // 기회 추가 시에는 이 메시지를 표시하지 않음
+    console.log('기회 추가 시도:', loggedInUser.id); // 기회 추가 시도 로그
     // Apps Script에 기회 추가 요청
     const result = await sendRequestToAppsScript('addChance', { code: loggedInUser.id });
+    console.log('sendRequestToAppsScript (addChance) 결과:', result); // Apps Script 응답 결과 로그
 
     if (result && result.status === 'success') {
       const { chances: newChances } = result.data;
@@ -144,7 +160,7 @@ export default function App() {
     } else if (result && result.status === 'error') {
       setMessage(result.message);
     } else {
-      setMessage('기회 추가 중 알 수 없는 오류가 발생했습니다.');
+      setMessage('기회 추가 중 알 수 없는 오류가 발생했습니다. 개발자 도구 콘솔을 확인해주세요.');
     }
   };
 
@@ -152,7 +168,7 @@ export default function App() {
     <div
       className="relative flex items-center justify-center h-screen bg-cover bg-center overflow-hidden"
       style={{
-        backgroundImage: "url('/bg.jpg')", 
+        backgroundImage: "url('/bg.jpg')",
       }}
     >
       {/* 화면 전체를 덮는 오버레이 (텍스트 가독성을 높이기 위해) */}
@@ -209,7 +225,7 @@ export default function App() {
               )}
               {diceResult && !isDiceAnimating && (
                 <div className="text-5xl sm:text-6xl md:text-7xl font-extrabold whitespace-nowrap">
-                  🎲 {diceResult} 🎲
+                   {diceResult} 🎲
                 </div>
               )}
             </div>
