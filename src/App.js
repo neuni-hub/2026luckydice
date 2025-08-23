@@ -111,7 +111,7 @@ export default function App() {
     <div
       className="relative flex items-center justify-center min-h-screen bg-cover bg-center overflow-hidden"
       style={{
-        backgroundImage: "url('https://placehold.co/3024x1714/4A90E2/FFFFFF?text=Background+Image')",
+        backgroundImage: "url('/bg.jpg')",
       }}
     >
       {/* 화면 전체를 덮는 오버레이 (텍스트 가독성을 높이기 위해) */}
