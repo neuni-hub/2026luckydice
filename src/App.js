@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-// 시뮬레이션된 사용자 데이터 (실제 환경에서는 백엔드에서 Google Sheet 또는 DB와 연동됩니다)
-// 각 고유번호별로 남은 기회 횟수를 저장합니다.
-const initialUsersData = {
-  'user123': { chances: 3, name: '김코딩' },
-  'user456': { chances: 0, name: '이개발' },
-  'user789': { chances: 5, name: '박디자인' },
-};
+// Google Apps Script 배포 URL을 여기에 직접 입력합니다.
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-j4X1mkx4yR6yu6ir6NUasAw9gs0AoJF_dRhInICqHWlqwiOCO8TG6YpeH253N9vBzg/exec";
 
 export default function App() {
   const [uniqueId, setUniqueId] = useState(''); // 사용자가 입력하는 고유번호
@@ -15,34 +10,70 @@ export default function App() {
   const [diceResult, setDiceResult] = useState(null); // 주사위 굴리기 결과 (숫자)
   const [isDiceAnimating, setIsDiceAnimating] = useState(false); // 주사위 애니메이션 활성화 상태
   const [message, setMessage] = useState(''); // 사용자에게 표시될 메시지
-  const [usersData, setUsersData] = useState(initialUsersData); // 시뮬레이션된 전체 사용자 데이터
+
+  // Google Apps Script에 요청 보내는 범용 함수
+  const sendRequestToAppsScript = async (action, payload = {}) => {
+    if (!GOOGLE_APPS_SCRIPT_URL) {
+      setMessage('Google Apps Script URL이 설정되지 않았습니다.');
+      return null;
+    }
+
+    // URL에 쿼리 파라미터로 액션과 페이로드 추가
+    const url = new URL(GOOGLE_APPS_SCRIPT_URL);
+    url.searchParams.append('action', action);
+    for (const key in payload) {
+      url.searchParams.append(key, payload[key]);
+    }
+
+    try {
+      setMessage('서버에 요청 중...');
+      const response = await fetch(url.toString(), {
+        method: 'GET', // Apps Script의 doGet 함수를 호출하기 위해 GET 사용
+        mode: 'cors', // CORS 정책 준수
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Apps Script 요청 실패:', error);
+      setMessage(`오류 발생: ${error.message}. 콘솔을 확인해주세요.`);
+      return null;
+    }
+  };
 
   // 로그인 처리 함수
-  const handleLogin = () => {
-    // 고유번호가 비어있으면 에러 메시지 표시
+  const handleLogin = async () => {
     if (!uniqueId.trim()) {
       setMessage('고유번호를 입력해주세요.');
       return;
     }
 
-    // 시뮬레이션된 사용자 데이터에서 고유번호 조회
-    const user = usersData[uniqueId];
+    const result = await sendRequestToAppsScript('login', { code: uniqueId });
 
-    if (user) {
-      setLoggedInUser({ id: uniqueId, name: user.name });
-      setChances(user.chances);
-      setDiceResult(null); // 로그인 시 주사위 결과 초기화
-      setIsDiceAnimating(false); // 애니메이션 상태 초기화
+    if (result && result.status === 'success') {
+      const { name, chances: fetchedChances } = result.data;
+      setLoggedInUser({ id: uniqueId, name });
+      setChances(fetchedChances);
+      setDiceResult(null);
+      setIsDiceAnimating(false);
 
-      // 기회 횟수에 따른 메시지 설정
-      if (user.chances > 0) {
-        setMessage(`안녕하세요, ${user.name}님! ${user.chances}번의 기회가 있어요.`);
+      if (fetchedChances > 0) {
+        setMessage(`안녕하세요, ${name}님! ${fetchedChances}번의 기회가 있어요.`);
       } else {
-        setMessage(`${user.name}님, 남은 기회가 없어요.`);
+        setMessage(`${name}님, 남은 기회가 없어요.`);
       }
+    } else if (result && result.status === 'error') {
+      setMessage(result.message);
+      setLoggedInUser(null);
+      setChances(0);
+      setDiceResult(null);
+      setIsDiceAnimating(false);
     } else {
-      // 고유번호가 없는 경우
-      setMessage('번호를 다시 확인해주세요.');
+      setMessage('로그인 중 알 수 없는 오류가 발생했습니다.');
       setLoggedInUser(null);
       setChances(0);
       setDiceResult(null);
@@ -51,71 +82,81 @@ export default function App() {
   };
 
   // 주사위 굴리기 처리 함수
-  const handleRollDice = () => {
+  const handleRollDice = async () => {
     if (!loggedInUser) {
       setMessage('먼저 로그인해주세요.');
       return;
     }
 
     if (chances > 0) {
-      // 기회 1회 차감
-      const newChances = chances - 1;
-      setChances(newChances);
-
-      // 시뮬레이션된 사용자 데이터 업데이트 (실제 구글 시트 연동 시 백엔드에서 처리)
-      setUsersData(prevData => ({
-        ...prevData,
-        [loggedInUser.id]: { ...prevData[loggedInUser.id], chances: newChances }
-      }));
-
-      // 주사위 결과 초기화 및 애니메이션 시작
+      // 주사위 애니메이션 시작
       setDiceResult(null);
       setIsDiceAnimating(true);
-      setMessage('주사위를 굴리고 있어요...'); // 주사위 굴리는 중 메시지
+      setMessage('주사위를 굴리고 있어요...');
 
-      // 애니메이션 시간 (예: 1.5초) 후에 실제 주사위 결과 표시
-      setTimeout(() => {
-        const roll = Math.floor(Math.random() * 6) + 1;
-        setDiceResult(roll);
-        setIsDiceAnimating(false); // 애니메이션 종료
+      const roll = Math.floor(Math.random() * 6) + 1; // 클라이언트 측에서 주사위 결과 먼저 생성
 
-        // 최종 메시지 업데이트
-        if (newChances === 0) {
-          setMessage(`${loggedInUser.name}님, 남은 기회가 없어요.`);
-        } else {
-          setMessage(`${loggedInUser.name}님! 남은 기회: ${newChances}회`);
-        }
-      }, 1500); // 1.5초 후에 결과가 나타나도록 설정
+      // Apps Script에 기회 차감 요청
+      const result = await sendRequestToAppsScript('rollDice', { code: loggedInUser.id, rollResult: roll });
+
+      if (result && result.status === 'success') {
+        const { chances: newChances } = result.data;
+        setChances(newChances);
+
+        // 애니메이션 시간 (예: 1.5초) 후에 실제 주사위 결과 표시
+        setTimeout(() => {
+          setDiceResult(roll);
+          setIsDiceAnimating(false); // 애니메이션 종료
+
+          if (newChances === 0) {
+            setMessage(`${loggedInUser.name}님, 남은 기회가 없어요.`);
+          } else {
+            setMessage(`${loggedInUser.name}님! 남은 기회: ${newChances}회`);
+          }
+        }, 1500);
+      } else if (result && result.status === 'error') {
+        setMessage(result.message);
+        setIsDiceAnimating(false); // 오류 시 애니메이션 종료
+      } else {
+        setMessage('주사위 굴리기 중 알 수 없는 오류가 발생했습니다.');
+        setIsDiceAnimating(false); // 오류 시 애니메이션 종료
+      }
+
     } else {
-      // 기회가 없는 경우
       setMessage(`${loggedInUser.name}님, 남은 기회가 없어요.`);
     }
   };
 
-  // "1,000원으로 한 번 더 굴리기" 버튼 클릭 시 처리 (시뮬레이션)
-  const handleAddChance = () => {
+  // "1,000원으로 한 번 더 굴리기" 버튼 클릭 시 처리 (Apps Script를 통해 기회 추가)
+  const handleAddChance = async () => {
     if (!loggedInUser) {
       setMessage('먼저 로그인해주세요.');
       return;
     }
-    const newChances = chances + 1;
-    setChances(newChances);
-    setUsersData(prevData => ({
-      ...prevData,
-      [loggedInUser.id]: { ...prevData[loggedInUser.id], chances: newChances }
-    }));
-    setMessage(`${loggedInUser.name}님, 1회 기회가 추가되었습니다! 총 ${newChances}번의 기회가 있어요.`);
+
+    // Apps Script에 기회 추가 요청
+    const result = await sendRequestToAppsScript('addChance', { code: loggedInUser.id });
+
+    if (result && result.status === 'success') {
+      const { chances: newChances } = result.data;
+      setChances(newChances);
+      setMessage(`${loggedInUser.name}님, 1회 기회가 추가되었습니다! 총 ${newChances}번의 기회가 있어요.`);
+    } else if (result && result.status === 'error') {
+      setMessage(result.message);
+    } else {
+      setMessage('기회 추가 중 알 수 없는 오류가 발생했습니다.');
+    }
   };
 
   return (
     <div
-      className="relative flex items-center justify-center min-h-screen bg-cover bg-center overflow-hidden"
+      className="relative flex items-center justify-center h-screen bg-cover bg-center overflow-hidden"
       style={{
-        backgroundImage: "url('/bg.jpg')",
+        backgroundImage: "url('/bg.jpg')", 
       }}
     >
       {/* 화면 전체를 덮는 오버레이 (텍스트 가독성을 높이기 위해) */}
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-black opacity-20"></div>
 
       {/* 중앙 컨텐츠 영역 */}
       <div className="relative z-10 p-4 sm:p-8 md:p-12 lg:p-16 text-white text-center w-full max-w-lg md:max-w-2xl lg:max-w-4xl flex flex-col items-center">
@@ -155,14 +196,13 @@ export default function App() {
           <div className="flex flex-col items-center space-y-6 w-full">
             {/* 캐릭터 이미지 (로그인 후부터 화면에 표시) */}
             <img
-              src="https://placehold.co/150x200/FFC0CB/000000?text=Your+Character" // 여기에 직접 그린 캐릭터 이미지 URL을 넣어주세요!
+              src="/character.png" // 캐릭터 이미지도 public 폴더에 넣었다고 가정
               alt="게임 캐릭터"
-              className="mb-8 w-32 h-auto md:w-48 lg:w-64 z-20 object-contain" // 입력칸 위에 중앙 정렬, 하단 마진 추가
+              className="mb-8 w-32 h-auto md:w-48 lg:w-64 z-20 object-contain"
             />
             {/* 주사위 애니메이션 및 결과 표시 영역 */}
             <div className="relative mb-8 flex items-center justify-center w-full max-w-sm h-auto">
               {isDiceAnimating && (
-                // z-30으로 z-index를 높여 캐릭터(z-20)보다 앞에 보이도록 수정
                 <div className="absolute w-32 h-32 bg-gray-300 rounded-lg flex items-center justify-center text-6xl font-bold text-gray-800 shadow-xl dice-toss-animation z-30">
                   ?
                 </div>
@@ -210,6 +250,13 @@ export default function App() {
 
       {/* CSS 애니메이션 스타일 정의 */}
       <style>{`
+        /* HTML 및 Body가 뷰포트 전체 높이를 차지하도록 설정 */
+        html, body, #root {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden; /* 스크롤바 방지 */
+        }
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
         }
