@@ -156,7 +156,7 @@ export default function App() {
     if (result && result.status === 'success') {
       const { chances: newChances } = result.data;
       setChances(newChances);
-      setMessage(`${loggedInUser.name}님, 기회가 추가되었습니다!`);
+      setMessage(`이제 한 번 더 도전할 수 있어요`);
     } else if (result && result.status === 'error') {
       setMessage(result.message);
     } else {
