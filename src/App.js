@@ -156,7 +156,7 @@ export default function App() {
     if (result && result.status === 'success') {
       const { chances: newChances } = result.data;
       setChances(newChances);
-      setMessage(`${loggedInUser.name}님, 1회 기회가 추가되었습니다! 총 ${newChances}번의 기회가 있어요.`);
+      setMessage(`${loggedInUser.name}님, 1회 기회가 추가되었습니다! \n총 ${newChances}번의 기회가 있어요.`);
     } else if (result && result.status === 'error') {
       setMessage(result.message);
     } else {
@@ -175,10 +175,10 @@ export default function App() {
       <div className="absolute inset-0 bg-black opacity-20"></div>
 
       {/* 중앙 컨텐츠 영역 */}
-      <div className="relative z-10 p-4 sm:p-8 md:p-12 lg:p-16 text-white text-center w-full max-w-lg md:max-w-2xl lg:max-w-4xl flex flex-col items-center">
+      <div className="relative z-10 p-4 sm:p-8 md:p-12 lg:p-16 text-white text-center w-full max-w-lg md:max-w-2xl lg:max-w-3xl flex flex-col items-center">
         {/* 메시지 표시 */}
         {message && (
-          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-6 font-semibold">
+          <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl leading-relaxed mb-6 font-semibold">
             {message}
           </p>
         )}
