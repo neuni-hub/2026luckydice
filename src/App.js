@@ -191,7 +191,7 @@ export default function App() {
               placeholder="고유번호를 입력하세요"
               value={uniqueId}
               onChange={(e) => setUniqueId(e.target.value)}
-              className="w-full max-w-md p-3 sm:p-4 md:p-5 text-gray-900 bg-white rounded-xl text-lg sm:text-xl md:text-2xl focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-300"
+              className="w-full max-w-md p-3 sm:p-4 md:p-5 text-gray-900 bg-white rounded-[30px] text-lg sm:text-xl md:text-2xl focus:outline-none focus:ring-4 focus:ring-blue-500 transition-all duration-300"
             />
             <button
               onClick={handleLogin}
@@ -234,7 +234,7 @@ export default function App() {
               <button
                 onClick={handleRollDice}
                 disabled={isDiceAnimating} // 애니메이션 중에는 버튼 비활성화
-                className={`w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-4xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
+                className={`w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
                   isDiceAnimating
                     ? 'opacity-60 cursor-not-allowed'
                     : 'hover:bg-gray-800 transform hover:scale-105 active:scale-95 focus:ring-gray-600'
@@ -250,7 +250,7 @@ export default function App() {
             ) : (
               <button
                 onClick={handleAddChance}
-                className="w-full max-w-md bg-green-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-4xl lg:text-4xl leading-relaxed shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500 whitespace-pre-line"
+                className="w-full max-w-md bg-green-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl leading-relaxed shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-green-500 whitespace-pre-line"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
