@@ -73,7 +73,7 @@ export default function App() {
       setIsDiceAnimating(false);
 
       if (fetchedChances > 0) {
-        setMessage(`안녕하세요, ${name}님! {"\n"}${fetchedChances}번의 기회가 있어요.`);
+        setMessage(`안녕하세요, ${name}님! \n${fetchedChances}번의 기회가 있어요.`);
       } else {
         setMessage(`${name}님, 남은 기회가 없어요.`);
       }
