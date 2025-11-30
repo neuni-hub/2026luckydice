@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Google Apps Script 배포 URL을 여기에 직접 입력합니다.
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-j4X1mkx4yR6yu6ir6NUasAw9gs0AoJF_dRhInICqHWlqwiOCO8TG6YpeH253N9vBzg/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlBn7wEvokWJs9JX5cxvEcGgHs2QAojZOrXeBmyjf7HYgmXtB9PV2Rp3KUVGMcQW0yGQ/exec";
 
 export default function App() {
   const [uniqueId, setUniqueId] = useState(''); // 사용자가 입력하는 고유번호
