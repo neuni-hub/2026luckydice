@@ -29,7 +29,6 @@ export default function App() {
     console.log('API 요청 URL:', url.toString()); // 요청 URL 로그
 
     try {
-      // setMessage('서버에 요청 중...'); // 이 부분을 제거했습니다.
       const response = await fetch(url.toString(), {
         method: 'GET', // Apps Script의 doGet 함수를 호출하기 위해 GET 사용
         mode: 'cors', // CORS 정책 준수
@@ -127,7 +126,7 @@ export default function App() {
           } else {
             setMessage(`남은 기회: ${newChances}회`);
           }
-        }, 1500);
+        }, 1000);
       } else if (result && result.status === 'error') {
         setMessage(result.message);
         setIsDiceAnimating(false); // 오류 시 애니메이션 종료
@@ -234,7 +233,7 @@ export default function App() {
               <button
                 onClick={handleRollDice}
                 disabled={isDiceAnimating} // 애니메이션 중에는 버튼 비활성화
-                className={`w-full max-w-md bg-[#1B1B1B] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
+                className={`w-full max-w-md bg-[#353e76] text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 ${
                   isDiceAnimating
                     ? 'opacity-60 cursor-not-allowed'
                     : 'hover:bg-gray-800 transform hover:scale-105 active:scale-95 focus:ring-gray-600'
