@@ -249,7 +249,7 @@ export default function App() {
             ) : (
               <button
                 onClick={handleAddChance}
-                className="w-full max-w-md bg-green-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl leading-relaxed shadow-lg hover:bg-purple-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-purple-500 whitespace-pre-line"
+                className="w-full max-w-md bg-purple-700 text-[#f0f0f0] font-bold py-4 sm:py-5 md:py-6 px-6 sm:px-8 md:px-10 rounded-[30px] text-2xl sm:text-3xl md:text-3xl lg:text-3xl leading-relaxed shadow-lg hover:bg-purple-600 transition-all duration-300 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-purple-500 whitespace-pre-line"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
